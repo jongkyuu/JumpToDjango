@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load pybo_filter %}
 {% block content %}
 <div class="container my-3">
     <table class="table">
@@ -13,7 +14,10 @@
         {% if question_list %}
         {% for question in question_list %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>
+                <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
+                {{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}
+            </td>
             <td>
                 <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
             </td>
@@ -40,55 +44,42 @@
         <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
     </li>
     {% endif %}
+
     <!-- 페이지리스트 -->
     {% for page_number in question_list.paginator.page_range %}
-    {% if page_number == question_list.number %}
-        <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
-        </li>
-    {% else %}
-        {% if forloop.first %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1">1</a>
-            </li>
-            {% if question_list.number > 4 %}
-                <li class="page-item disabled">
-                    <span class="page-link">...</span>
-                </li>
-            {% endif %}
-        {% endif %}
-        {% if question_list.number > page_number|add:'-3' and question_list.number < page_number|add:'3' %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
-            </li>
-        {% endif %}
-        {% if forloop.last %}
-            {% if question_list.paginator.num_pages > question_list.number|add:'3' %}
-                <li class="page-item disabled">
-                    <span class="page-link">...</span>
-                </li>
-            {% endif %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ question_list.paginator.num_pages }}">{{ question_list.paginator.num_pages }}</a>
-            </li>
-        {% endif %}
-    {% endif %}
-{% endfor %}
-
-    <!-- {% for page_number in question_list.paginator.page_range %}
-        {% if page_number >= question_list.number|add:-3 and page_number <= question_list.number|add:3 %}
-            {% if page_number == question_list.number %}
+        {% if page_number == question_list.number %}
             <li class="page-item active" aria-current="page">
                 <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
             </li>
-            {% else %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
-            </li>
+        {% else %}
+            {% if forloop.first %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+                {% if question_list.number > 4 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endif %}
+            {% if question_list.number > page_number|add:'-3' and question_list.number < page_number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+            {% endif %}
+            {% if forloop.last %}
+                {% if question_list.paginator.num_pages > question_list.number|add:'3' %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ question_list.paginator.num_pages }}">{{ question_list.paginator.num_pages }}</a>
+                </li>
             {% endif %}
         {% endif %}
-    {% endfor %} -->
-    <!-- 다음페이지 -->
+    {% endfor %}
+
     {% if question_list.has_next %}
     <li class="page-item">
         <a class="page-link" href="?page={{ question_list.next_page_number }}">다음</a>
