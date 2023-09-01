@@ -6,9 +6,9 @@ from common.forms import UserForm
 
 
 # Create your views here.
-def login(request):
-    print("login test!")
-    return HttpResponse("login!")
+# def login(request):
+#     print("login test!")
+#     return HttpResponse("login!")
 
 
 def signup(request):
