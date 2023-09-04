@@ -86,6 +86,7 @@ def question_modify(request, question_id):
 @login_required(login_url="common:login")
 def question_delete(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    print(f"request : {request}")
     if request.user != question.author:
         messages.error(request, "삭제권한이 없습니다")
         return redirect("pybo:detail", question_id=question.id)
