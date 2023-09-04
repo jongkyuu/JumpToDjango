@@ -18,7 +18,10 @@
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
                     <div class="mb-3">{{ question.author.username }}</div>
-                    <div>{{ question.create_date }}</div>
+                    <div class="mb-1">생성일 - {{ question.create_date }}</div>
+                    {% if question.modify_date %}
+                    <div>수정일 - {{ question.modify_date }}</div>
+                    {% endif %}
                 </div>
             </div>
             {% if request.user == question.author %}
@@ -41,31 +44,30 @@
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
                     <div class="mb-2">{{ answer.author.username }}</div>
-                    <div>{{ answer.create_date }}</div>
+                    <div>생성일 - {{ answer.create_date }}</div>
+                    {% if answer.modify_date %}
+                    <div>수정일 - {{ answer.modify_date }}</div>
+                    {% endif %}
                 </div>
             </div>
+            {% if request.user == question.author %}
+            <div class="my-3">
+                <a href="{% url 'pybo:answer_modify' answer.id  %}" 
+                   class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)" 
+                   class="delete btn btn-sm btn-outline-secondary"
+                   data-uri="{% url 'pybo:answer_delete' answer.id %}">삭제</a>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
     <!-- 답변 등록 -->
     <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
         {% csrf_token %}
-            <!-- 오류표시 Start -->
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field in form %}
-                {% if field.errors %}
-                <div>
-                    <strong>{{ field.label }}</strong>
-                    {{ field.errors }}
-                </div>
-                {% endif %}
-                {% endfor %}
-            </div>
-            {% endif %}
-            <!-- 오류표시 End -->
-            
-            <div class="form-group mb-3">
+        {% include "form_errors.html" %}
+        
+        <div class="form-group mb-3">
             <label for="content" class="form-label">답변내용</label>
             <textarea name="content" id="content" class="form-control" rows="10"
             {% if not request.user.is_authenticated %} disabled {% endif %}></textarea>
