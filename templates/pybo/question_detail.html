@@ -24,15 +24,33 @@
                     {% endif %}
                 </div>
             </div>
-            {% if request.user == question.author %}
+            <!-- <div id="loading-modal" class="spinner-border spinner-border-sm" style="display: none"></div> -->
+            <div id="loading-modal" class="modal" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content" style="background-color: transparent; border: none; box-shadow: none;">
+                        <div class="modal-body text-center">
+                            <div class="spinner-border spinner-border-lg text-primary" role="status">
+                                <span class="visually-hidden">로딩 중...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="my-3">
+                <a href="javascript:void(0)" data-uri="{% url 'pybo:question_vote' question.id %}"
+                class="recommend btn btn-sm btn-outline-secondary" {% if not request.user.is_authenticated %} disabled {% endif %}> 추천
+                    <span class="badge rounded-pill bg-success">{{question.voter.count}}</span>
+                </a>
+                {% if request.user == question.author %}
                 <a href="{% url 'pybo:question_modify' question.id  %}" 
                    class="btn btn-sm btn-outline-secondary">수정</a>
                 <a href="javascript:void(0)" 
                    class="delete btn btn-sm btn-outline-secondary"
                    data-uri="{% url 'pybo:question_delete' question.id %}">삭제</a>
+                {% endif %}
             </div>
-            {% endif %}
+            
         </div>
     </div>
     <!-- 답변 -->
@@ -83,6 +101,20 @@ Array.from(delete_elements).forEach(function(element) {
     element.addEventListener('click', function() {
         if(confirm("정말로 삭제하시겠습니까?")) {
             location.href = this.dataset.uri;
+        };
+    });
+});
+
+const recommend_elements = document.getElementsByClassName("recommend");
+Array.from(recommend_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 추천하시겠습니까?")) {
+            const loading_element = document.getElementById("loading-modal");
+            console.log(document.getElementById("loading-modal"))
+            if (loading_element) {
+                loading_element.style.display = "block";
+            }
+            location.href = this.dataset.uri;           
         };
     });
 });
