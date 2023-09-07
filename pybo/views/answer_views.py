@@ -4,6 +4,7 @@ from ..models import Question, Answer
 from ..forms import AnswerForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
 
 
 @login_required(login_url="common:login")
@@ -68,5 +69,10 @@ def answer_vote(request, answer_id):
         answer.voter.remove(request.user)
     else:
         answer.voter.add(request.user)
+    # return redirect("pybo:detail", question_id=answer.question.id)
 
-    return redirect("pybo:detail", question_id=answer.question.id)
+    # answer.voter.count 값을 가져와서 JSON 응답으로 반환
+    new_count = answer.voter.count()
+    response_data = {"new_count": new_count}
+    print(f"response_data : {response_data}")
+    return JsonResponse(response_data)
