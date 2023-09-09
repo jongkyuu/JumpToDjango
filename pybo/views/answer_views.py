@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 from ..models import Question, Answer
 from ..forms import AnswerForm
@@ -23,6 +23,7 @@ def answer_create(request, question_id):
             answer.save()
             answ_id = answer.id
             print(f"answ_id in  answer_create : {answ_id}")
+            print(redirect("pybo:detail", question_id=question.id, answer_id=answ_id))
             return redirect("pybo:detail", question_id=question.id, answer_id=answ_id)
     else:
         form = AnswerForm()
@@ -43,7 +44,9 @@ def answer_modify(request, answer_id):
             answer = form.save(commit=False)
             answer.modify_date = timezone.now()
             answer.save()
-            return redirect("pybo:detail", question_id=answer.question.id)
+            return redirect(
+                f'{resolve_url("pybo:detail", question_id=answer.question.id)}#answer_{answer_id}'
+            )
     else:
         form = AnswerForm(instance=answer)
         print(f"form : {form}")
@@ -65,14 +68,21 @@ def answer_delete(request, answer_id):
 @login_required(login_url="common:login")
 def answer_vote(request, answer_id):
     answer = get_object_or_404(Answer, pk=answer_id)
-
+    print("enter answer_vote")
     if request.user == answer.author:
         messages.error(request, "본인이 작성한 글은 추천할수 없습니다")
     elif answer.voter.filter(pk=request.user.pk).exists():
         answer.voter.remove(request.user)
     else:
+        print("answer_vote add")
         answer.voter.add(request.user)
-    return redirect("pybo:detail", question_id=answer.question.id)
+        print(
+            "resolve_url : ", resolve_url("pybo:detail", question_id=answer.question.id)
+        )
+
+    return redirect(
+        f'{resolve_url("pybo:detail", question_id=answer.question.id)}#answer_{answer_id}'
+    )
 
     # answer.voter.count 값을 가져와서 JSON 응답으로 반환
     # new_count = answer.voter.count()

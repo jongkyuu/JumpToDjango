@@ -99,7 +99,7 @@
             behavior: "smooth",
             });
         };
-      </script>
+    </script>
     {% endif %}
 
 
@@ -133,7 +133,7 @@ Array.from(recommend_elements).forEach(function(element) {
     element.addEventListener('click', function() {
         if(confirm("정말로 추천하시겠습니까?")) {
             const loading_element = document.getElementById("loading-modal");
-            // console.log(document.getElementById("loading-modal"))
+
             if (loading_element) {
                 loading_element.style.display = "block";
             }
