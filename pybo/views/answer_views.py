@@ -12,6 +12,7 @@ def answer_create(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     print(f"question : {question}")
     print(f"request.user : {request.user}")
+    answ_id = None
     if request.method == "POST":
         form = AnswerForm(request.POST)
         if form.is_valid():
@@ -20,7 +21,9 @@ def answer_create(request, question_id):
             answer.create_date = timezone.now()
             answer.question = question
             answer.save()
-            return redirect("pybo:detail", question_id=question.id)
+            answ_id = answer.id
+            print(f"answ_id in  answer_create : {answ_id}")
+            return redirect("pybo:detail", question_id=question.id, answer_id=answ_id)
     else:
         form = AnswerForm()
     context = {"question": question, "form": form}
@@ -69,10 +72,10 @@ def answer_vote(request, answer_id):
         answer.voter.remove(request.user)
     else:
         answer.voter.add(request.user)
-    # return redirect("pybo:detail", question_id=answer.question.id)
+    return redirect("pybo:detail", question_id=answer.question.id)
 
     # answer.voter.count 값을 가져와서 JSON 응답으로 반환
-    new_count = answer.voter.count()
-    response_data = {"new_count": new_count}
-    print(f"response_data : {response_data}")
-    return JsonResponse(response_data)
+    # new_count = answer.voter.count()
+    # response_data = {"new_count": new_count}
+    # print(f"response_data : {response_data}")
+    # return JsonResponse(response_data)

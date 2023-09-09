@@ -56,6 +56,7 @@
     <!-- 답변 -->
     <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
     {% for answer in question.answer_set.all %}
+    <a id="answer_{{ answer.id }}"></a>
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
@@ -74,7 +75,7 @@
             <div class="my-3">
                 <a href="javascript:void(0)" data-uri="{% url 'pybo:answer_vote' answer.id %}"
                 class="recommend btn btn-sm btn-outline-secondary" {% if not request.user.is_authenticated %} disabled {% endif %}> 추천
-                    <span class="answer-voter badge rounded-pill bg-success">{{answer.voter.count}}</span>
+                    <span class="badge rounded-pill bg-success">{{answer.voter.count}}</span>
                 </a>
                 {% if request.user == answer.author %}
                 <a href="{% url 'pybo:answer_modify' answer.id  %}" 
@@ -87,6 +88,21 @@
         </div>
     </div>
     {% endfor %}
+
+    {% if answer_id %}
+
+    <script>
+        window.onload = function() {
+            var answerId = "{{ answer_id }}";
+            var answerAnchor = document.querySelector("#answer_" + answerId);
+            answerAnchor.scrollIntoView({
+            behavior: "smooth",
+            });
+        };
+      </script>
+    {% endif %}
+
+
     <!-- 답변 등록 -->
     <form action="{% url 'pybo:answer_create' question.id %}" method="post" class="my-3">
         {% csrf_token %}
@@ -121,27 +137,28 @@ Array.from(recommend_elements).forEach(function(element) {
             if (loading_element) {
                 loading_element.style.display = "block";
             }
-            // location.href = this.dataset.uri;    
+            location.href = this.dataset.uri;    
 
-            const uri = this.dataset.uri;
-            fetch(uri)
-                .then(response => response.json()) // JSON 형태의 응답을 파싱
-                .then(data => {
-                    // 추천 수 업데이트
-                    const answerVoterElement = this.querySelector(".answer-voter");
-                    if (answerVoterElement) {
-                        answerVoterElement.textContent = data.new_count;
-                    }
-                    console.log(`answerVoterElement.textContent : ${answerVoterElement.textContent}`)
+            // fetch로 요청
+            // const uri = this.dataset.uri;
+            // fetch(uri)
+            //     .then(response => response.json()) // JSON 형태의 응답을 파싱
+            //     .then(data => {
+            //         // 추천 수 업데이트
+            //         const answerVoterElement = this.querySelector(".answer-voter");
+            //         if (answerVoterElement) {
+            //             answerVoterElement.textContent = data.new_count;
+            //         }
+            //         console.log(`answerVoterElement.textContent : ${answerVoterElement.textContent}`)
 
-                    // 로딩 모달 숨기기
-                    if (loading_element) {
-                        loading_element.style.display = "none";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });       
+            //         // 로딩 모달 숨기기
+            //         if (loading_element) {
+            //             loading_element.style.display = "none";
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //     });       
         };
     });
 });

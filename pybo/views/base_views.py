@@ -13,7 +13,14 @@ def index(request):
     return render(request, "pybo/question_list.html", context)
 
 
-def detail(request, question_id):
+def detail(request, question_id, answer_id=None):
+    print(f"request: {request}")
     question = get_object_or_404(Question, pk=question_id)
-    context = {"question": question}
+    if answer_id is None:
+        context = {"question": question}
+    else:
+        context = {"question": question, "answer_id": answer_id}
+
+    print(f"answer_pk in detail : {answer_id}")
+    print(f"context :{context}")
     return render(request, "pybo/question_detail.html", context)
