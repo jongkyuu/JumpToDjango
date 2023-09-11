@@ -12,6 +12,15 @@
         </tr>
         </thead>
         <tbody>
+        
+        <div class="mb-3" style="display: flex; justify-content: space-between;">
+            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary">질문 등록하기</a>
+            <form id="searchForm" method="GET" action="{% url 'pybo:index' %}" style="margin-left: auto;">
+                <input type="text" name="kw" placeholder="검색어를 입력하세요" value="{{ query }}" style="width:300px; margin-right: 5px;">
+                <input type="submit" value="검색">
+            </form>
+        </div>
+        
         {% if question_list %}
         {% for question in question_list %}
         <tr class="text-center">
@@ -96,5 +105,6 @@
     {% endif %}
 </ul>
 <!-- 페이징처리 끝 -->
+
 </div>
 {% endblock %}
