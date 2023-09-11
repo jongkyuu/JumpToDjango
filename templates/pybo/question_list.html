@@ -66,27 +66,23 @@
                 <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
             </li>
         {% else %}
-            {% if forloop.first %}
+            {% if forloop.first and question_list.number > 3 %}
                 <li class="page-item">
                     <a class="page-link" href="?page=1">1</a>
                 </li>
-                {% if question_list.number > 4 %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
             {% endif %}
             {% if question_list.number > page_number|add:'-3' and question_list.number < page_number|add:'3' %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
                 </li>
             {% endif %}
-            {% if forloop.last %}
-                {% if question_list.paginator.num_pages > question_list.number|add:'3' %}
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                {% endif %}
+            {% if forloop.last and question_list.paginator.num_pages > question_list.number|add:'2' %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
                 <li class="page-item">
                     <a class="page-link" href="?page={{ question_list.paginator.num_pages }}">{{ question_list.paginator.num_pages }}</a>
                 </li>
