@@ -7,18 +7,16 @@ from django.db.models import Q
 def index(request):
     print(f"request : {request}")
     page = request.GET.get("page", "1")  # 페이지
-    query = request.GET.get("kw")
+    kw = request.GET.get("kw", "")
+    question_list = Question.objects.all()
 
-    if query:
-        question_list = Question.objects.filter(subject__icontains=query).order_by(
-            "-create_date"
-        )
-    else:
-        question_list = Question.objects.order_by("-create_date")
+    if kw:
+        question_list = Question.objects.filter(Q(subject__icontains=kw)).distinct()
 
+    question_list = question_list.order_by("-create_date")
     paginator = Paginator(question_list, 10)  # 페이지당 10개씩 보여주기
     page_obj = paginator.get_page(page)  # 몇페이지 보여줄건지
-    context = {"question_list": page_obj}
+    context = {"question_list": page_obj, "kw": kw}
     print("page number : ", page_obj.number)
     return render(request, "pybo/question_list.html", context)
 
